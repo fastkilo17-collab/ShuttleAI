@@ -1,0 +1,32 @@
+name: Build ShuttleAI Android APK
+on:
+  workflow_dispatch:
+  push:
+    paths: ['android/**', '.github/workflows/build-android.yml']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Generate Android platform scaffold if missing
+        working-directory: android
+        run: flutter create . --platforms=android
+      - name: Add Android permissions
+        run: |
+          sed -i '/<application/i\\    <uses-permission android:name="android.permission.CAMERA" />\\n    <uses-permission android:name="android.permission.INTERNET" />' android/android/app/src/main/AndroidManifest.xml
+      - name: Get dependencies
+        working-directory: android
+        run: flutter pub get
+      - name: Analyze
+        working-directory: android
+        run: flutter analyze
+      - name: Build APK
+        working-directory: android
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shuttleai-release-apk
+          path: android/build/app/outputs/flutter-apk/app-release.apk

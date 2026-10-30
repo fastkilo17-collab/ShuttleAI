@@ -1,0 +1,4 @@
+<!-- Add these inside android/app/src/main/AndroidManifest.xml after `flutter create .` -->
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.INTERNET" />
+<!-- Optional for later audio/RTMP publishing: RECORD_AUDIO -->
